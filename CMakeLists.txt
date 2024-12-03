@@ -20,7 +20,9 @@ add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_include_directories(${PROJECT_NAME} PRIVATE 
     includes
     external/imgui
+    external/imgui/backends
     external/glfw/include
+    external/glfw
 )
 
 find_package(OpenGL REQUIRED)
@@ -49,11 +51,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
     imgui
     glfw
     OpenGL::GL
-    CUDA::cudart
+#    CUDA::cudart
 )
 
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    
 if (WIN32)
     if(DEBUG == ON)
         target_compile_options(${PROJECT_NAME} PRIVATE /O2 /Ot)
@@ -61,10 +61,13 @@ if (WIN32)
         target_compile_options(${PROJECT_NAME} PRIVATE /Zi /JMC /Od)
 
 else if(UNIX AND NOT APPLE) 
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" AND DEBUG == ON)
-        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O0 -g -fsanitize=address,undefined -fno-inline)
-    else 
-        target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O3)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        if(DEBUG == ON)
+            target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O0 -g -fsanitize=address,undefined -fno-inline)
+        else 
+            target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O3)
+    else    
+        message("Compiler not supported.")
 else 
     message("Unknown platform, not supported. Not Linux or Windows.")
 endif()
