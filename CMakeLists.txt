@@ -27,12 +27,12 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 find_package(OpenGL REQUIRED)
 if (NOT OPENGL_FOUND)
-    message(FATAL_ERROR "OpenGL not found!")
+    message(FATAL_ERROR "OpenGL not found")
 endif()
 
 find_package(glfw3 REQUIRED)
 if (NOT glfw3_FOUND)
-    message(FATAL_ERROR "GLFW not found!")
+    message(FATAL_ERROR "GLFW not found")
 endif()
 
 add_library(imgui STATIC
