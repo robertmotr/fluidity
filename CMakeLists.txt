@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(FluidSimulator VERSION 1.0 LANGUAGES CXX CUDA)
+project(FluidSimulator VERSION 1.0 LANGUAGES C CXX CUDA)
 
 # set this to off to get smaller binary, optimization etc (release)
 # keep this on to make debugging as easy as possible, alongside more compiler checks such as address sanitizer
@@ -23,6 +23,9 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     external/imgui/backends
     external/glfw/include
     external/glfw
+    external/glad/include
+    external/glad/src
+    external/glad
 )
 
 find_package(OpenGL REQUIRED)
@@ -43,31 +46,40 @@ add_library(imgui STATIC
     external/imgui/backends/imgui_impl_opengl3.cpp
     external/imgui/backends/imgui_impl_glfw.cpp
 )
+target_include_directories(imgui PUBLIC external/imgui external/imgui/backends)
 
-target_include_directories(imgui PRIVATE external/imgui external/imgui/backends)
-target_link_libraries(imgui PRIVATE glfw OpenGL::GL)
+set_source_files_properties(external/glad/src/glad.c PROPERTIES LANGUAGE C)
+add_library(glad STATIC external/glad/src/glad.c)
+target_include_directories(glad PUBLIC external/glad/include)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
     imgui
     glfw
     OpenGL::GL
+    glad
 #    CUDA::cudart
 )
 
-if (WIN32)
-    if(DEBUG == ON)
-        target_compile_options(${PROJECT_NAME} PRIVATE /O2 /Ot)
-    else 
-        target_compile_options(${PROJECT_NAME} PRIVATE /Zi /JMC /Od)
-
-else if(UNIX AND NOT APPLE) 
+if(WIN32)
+    if(DEBUG)
+        target_compile_options(${PROJECT_NAME} PRIVATE /Zi /JMC /Od) # Debug options
+    else()
+        target_compile_options(${PROJECT_NAME} PRIVATE /O2 /Ot) # Release options
+    endif()
+elseif(UNIX AND NOT APPLE) 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        if(DEBUG == ON)
-            target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O0 -g -fsanitize=address,undefined -fno-inline)
-        else 
-            target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic -O3)
-    else    
-        message("Compiler not supported.")
-else 
-    message("Unknown platform, not supported. Not Linux or Windows.")
+        if(DEBUG)
+            target_compile_options(${PROJECT_NAME} PRIVATE 
+                -Wall -Wextra -Wpedantic -O0 -g -fsanitize=address,undefined -fno-inline) # Debug options
+            target_link_libraries(${PROJECT_NAME} PRIVATE
+                -fsanitize=address -fsanitize=undefined)
+        else()
+            target_compile_options(${PROJECT_NAME} PRIVATE 
+                -Wall -Wextra -Wpedantic -O3) # Release options
+        endif()
+    else()
+        message(FATAL_ERROR "Compiler not supported.")
+    endif()
+else()
+    message(FATAL_ERROR "Unknown platform, not supported. Not Linux or Windows.")
 endif()
