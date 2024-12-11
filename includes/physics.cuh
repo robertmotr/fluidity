@@ -116,38 +116,41 @@ private:
 
 __device__ __host__ clamp(Position &pos, uint32 clamp, uint32 boundary);
 
-__host__ void bilinearInterpolationCpu();
+__host__ void bilinearInterpolationCpu(Particle *particles, uint32 x, uint32 y);
 
-__global__ void bilinearInterpolationGpu();
+__global__ void bilinearInterpolationGpu(Particle *particles, uint32 x, uint32 y);
 
-__host__ void divergenceCpu();
+__host__ void computeDivergenceCpu(Particle *particles, uint32 widthSz,
+                                   uint32 heightSz);
 
-__global__ void divergenceGpu();
+__global__ void computeDivergenceGpu(Particle *particles, uint32 widthSz,
+                                     uint32 heightSz);
 
-__host__ void advectionCpu(Particle *particles, uint32 widthSz,
-                           uint32 heightSz);
+__host__ void computeAdvectionCpu(Particle *particles, uint32 widthSz,
+                                  uint32 heightSz);
 
-__global__ void advectionGpu(Particle *particles, uint32 widthSz, 
-                             uint32 heightSz);
+__global__ void computeAdvectionGpu(Particle *particles, uint32 widthSz, 
+                                    uint32 heightSz);
 
-__host__ void diffusionCpu(Particle *particles, uint32 widthSz, 
-                           uint32 heightSz, float diffusionRate, uint32 iterations);
+__host__ void computeDiffusionCpu(Particle *particles, uint32 widthSz, 
+                                  uint32 heightSz, float diffusionRate, uint32 iterations);
 
-__global__ void diffusionGpu(Particle *particles, uint32 widthSz, 
-                             uint32 heightSz, float diffusionRate, uint32 iterations);
+__global__ void computeDiffusionGpu(Particle *particles, uint32 widthSz, 
+                                    uint32 heightSz, float diffusionRate, uint32 iterations);
 
-__host__ void pressureProjectionCpu(Particle *particles, uint32 widthSz, 
-                                    uint32 heightSz, uint32 iterations);
+__host__ void computePressureProjectionCpu(Particle *particles, uint32 widthSz, 
+                                           uint32 heightSz, uint32 iterations);
 
-__global__ void pressureProjectionGpu(Particle *particles, uint32 widthSz, 
-                                    uint32 heightSz, uint32 iterations);
+__global__ void computePressureProjectionGpu(Particle *particles, uint32 widthSz, 
+                                             uint32 heightSz, uint32 iterations);
 
 __host__ void handleCollisionsCpu(Particle *particles, uint32 widthSz, 
-                                 uint32 heightSz, bool freeSlip);
+                                  uint32 heightSz, bool freeSlip);
 
 __global__ void handleCollisionsGpu(Particle *particles, uint32 widthSz, 
-                                   uint32 heightSz, bool freeSlip);
+                                    uint32 heightSz, bool freeSlip);
 
-__host__ void computeSimulationTick(Particle *particles, uint32 size);
+__host__ void computeSimulationTick(Particle *particles, uint32 widthSz, 
+                                    uint32 heightSz);
 
 
