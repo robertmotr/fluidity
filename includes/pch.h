@@ -3,7 +3,9 @@
 typedef unsigned int uint32;
 
 // cuda related
-#include <cudart.h>
+#include <cuda_runtime.h>
+#include <cuda.h>
+#include <device_launch_parameters.h>
 
 // std libs
 #include <iostream>

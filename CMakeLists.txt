@@ -9,11 +9,29 @@ set(DEBUG ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(CMAKE_CUDA_STANDARD 14)
+set(CMAKE_CUDA_STANDARD 17)
 set(CMAKE_CUDA_STANDARD_REQUIRED ON)
+set(CMAKE_CUDA_SEPARABLE_COMPILATION ON)
+set(CMAKE_CUDA_EXTENSIONS OFF)
+
+set(CMAKE_CUDA_ARCHITECTURES 75 80 86)
+
+find_package(OpenGL REQUIRED)
+if (NOT OPENGL_FOUND)
+    message(FATAL_ERROR "OpenGL not found")
+endif()
+
+find_package(glfw3 REQUIRED)
+if (NOT glfw3_FOUND)
+    message(FATAL_ERROR "GLFW not found")
+endif()
+
+set_source_files_properties(external/glad/src/glad.c PROPERTIES LANGUAGE C)
+add_library(glad STATIC external/glad/src/glad.c)
+target_include_directories(glad PUBLIC external/glad/include)
 
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.cu)
-file(GLOB_RECURSE HEADERS includes/*.h)
+file(GLOB_RECURSE HEADERS includes/*.h includes/*.cuh includes/*.hpp)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
@@ -26,17 +44,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
     external/glad/include
     external/glad/src
     external/glad
+    ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}
 )
-
-find_package(OpenGL REQUIRED)
-if (NOT OPENGL_FOUND)
-    message(FATAL_ERROR "OpenGL not found")
-endif()
-
-find_package(glfw3 REQUIRED)
-if (NOT glfw3_FOUND)
-    message(FATAL_ERROR "GLFW not found")
-endif()
 
 add_library(imgui STATIC
     external/imgui/imgui.cpp
@@ -48,16 +57,14 @@ add_library(imgui STATIC
 )
 target_include_directories(imgui PUBLIC external/imgui external/imgui/backends)
 
-set_source_files_properties(external/glad/src/glad.c PROPERTIES LANGUAGE C)
-add_library(glad STATIC external/glad/src/glad.c)
-target_include_directories(glad PUBLIC external/glad/include)
+target_precompile_headers(${PROJECT_NAME} PRIVATE includes/pch.h)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE 
+target_link_libraries(${PROJECT_NAME} PUBLIC
     imgui
     glfw
     OpenGL::GL
     glad
-#    CUDA::cudart
+    cuda
 )
 
 if(WIN32)
