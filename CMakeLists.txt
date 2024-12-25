@@ -31,7 +31,7 @@ add_library(glad STATIC external/glad/src/glad.c)
 target_include_directories(glad PUBLIC external/glad/include)
 
 file(GLOB_RECURSE SOURCES src/*.cpp src/*.cu)
-file(GLOB_RECURSE HEADERS includes/*.h includes/*.cuh includes/*.hpp)
+file(GLOB_RECURSE HEADERS includes/*.h)
 
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 

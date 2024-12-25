@@ -1,4 +1,5 @@
-#include "render.hpp"
+#include "render.h"
+#include "physics.h"
 
 void errorCallback(int error, const char* description) {
     std::cout << "Error: " << description << std::endl;
