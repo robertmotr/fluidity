@@ -1,7 +1,5 @@
 #pragma once
 
-typedef unsigned int uint32;
-
 // cuda related
 #include <cuda_runtime.h>
 #include <cuda.h>
@@ -10,7 +8,10 @@ typedef unsigned int uint32;
 // std libs
 #include <iostream>
 #include <cstddef>
+#include <cstdint>
 #include <stdio.h>
+#include <cmath>
+#include <type_traits>
 
 // imgui/graphics/rendering
 #include "imgui.h"

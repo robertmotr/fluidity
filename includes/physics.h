@@ -2,25 +2,17 @@
 
 #include "pch.h"
 
-extern float dt;
-extern bool useGpu;
-extern bool freeSlip;
-extern uint32 cellSize;
-
-constexpr Vec2<float> gravity = Vec2<float>(0.0f, -9.8f);
-
 template<typename T>
 class Vec2 {
 private:
 
     T values[2] = {0};
 
-    static_assert(is_same(T, float) || is_same(T, uint32) || 
-                  is_same(T, int) || is_same(T, float),
-                  "Type used inside vector must be of unsigned int, int, or float.");    
+    static_assert(std::is_same<T, float>::value || std::is_same<T, uint32_t>::value ||
+                  std::is_same<T, int>::value, "Type used inside vector must be of unsigned int, int, or float.");    
 
     // for optimal memory accesses on the GPU
-    static_assert(128 % sizeof(Vector) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
+    static_assert(128 % sizeof(Vec2<T>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
 public:
     Vec2(T x, T y) {
         values[0] = x;
@@ -52,8 +44,8 @@ public:
 
     friend std::ostream& operator<<(std::ostream& os, const Vec2& vec) {
         os << "[";
-        os << values[0] << ", ";
-        os << values[1] << "]";
+        os << vec.values[0] << ", ";
+        os << vec.values[1] << "]";
         return os;
     }
 
@@ -91,15 +83,15 @@ public:
         return a[0] * b[0] + a[1] * b[1];
     }
 
-    friend T magnitude(const Vec2& a) {
-        return sqrt(pow(values[0], 2) + pow(values[1], 2));
+    friend T magnitude(const Vec2& vec) {
+        return std::sqrt(std::pow(vec.values[0], 2) + pow(vec.values[1], 2));
     } 
-}
+};
 
 class Particle {
 public:
-    Vec2<uint32> position(0, 0);
-    Vec2<float> velocity(0.0f, 0.0f);
+    Vec2<uint32_t> position((uint32_t)0, (uint32_t)0);
+    Vec2<float> velocity((float)0.0f, (float)0.0f);
     float density = 0.0f;
     float pressure = 0.0f;
     unsigned char rgb[4] = {0, 0, 0, 0};
@@ -112,51 +104,51 @@ public:
 private:
     // for optimal memory accesses on the GPU
     static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to divide evenly into 128 bytes.");
-} 
+};
 
-__device__ __host__ clamp(Vec2 &vec, uint32 clamp, uint32 boundary);
+__device__ __host__ clamp(Vec2 &vec, uint32_t clamp, uint32_t boundary);
 
-__host__ void computeSimulationTick(Particle *particles, uint32 widthSz, 
-                                    uint32 heightSz);
+__host__ void computeSimulationTick(Particle *particles, uint32_t widthSz, 
+                                    uint32_t heightSz);
 
 namespace GPU {
 
-    __global__ void bilinearInterpolationGpu(Particle *particles, uint32 x, uint32 y);
+    __global__ void bilinearInterpolationGpu(Particle *particles, uint32_t x, uint32_t y);
 
-    __global__ void computeDivergenceGpu(Particle *particles, uint32 widthSz,
-                                        uint32 heightSz);
+    __global__ void computeDivergenceGpu(Particle *particles, uint32_t widthSz,
+                                        uint32_t heightSz);
 
-    __global__ void computeAdvectionGpu(Particle *particles, uint32 widthSz, 
-                                        uint32 heightSz);
+    __global__ void computeAdvectionGpu(Particle *particles, uint32_t widthSz, 
+                                        uint32_t heightSz);
 
-    __global__ void computeDiffusionGpu(Particle *particles, uint32 widthSz, 
-                                        uint32 heightSz, float diffusionRate, uint32 iterations);
+    __global__ void computeDiffusionGpu(Particle *particles, uint32_t widthSz, 
+                                        uint32_t heightSz, float diffusionRate, uint32_t iterations);
 
-    __global__ void computePressureProjectionGpu(Particle *particles, uint32 widthSz, 
-                                                uint32 heightSz, uint32 iterations);
+    __global__ void computePressureProjectionGpu(Particle *particles, uint32_t widthSz, 
+                                                uint32_t heightSz, uint32_t iterations);
 
-    __global__ void handleCollisionsGpu(Particle *particles, uint32 widthSz, 
-                                        uint32 heightSz, bool freeSlip);
+    __global__ void handleCollisionsGpu(Particle *particles, uint32_t widthSz, 
+                                        uint32_t heightSz, bool freeSlip);
 }
 
 namespace CPU {
 
-    __host__ void bilinearInterpolationCpu(Particle *particles, uint32 x, uint32 y);
+    __host__ void bilinearInterpolationCpu(Particle *particles, uint32_t x, uint32_t y);
 
-    __host__ void computeDivergenceCpu(Particle *particles, uint32 widthSz,
-                                    uint32 heightSz);
+    __host__ void computeDivergenceCpu(Particle *particles, uint32_t widthSz,
+                                    uint32_t heightSz);
 
-    __host__ void computeAdvectionCpu(Particle *particles, uint32 widthSz,
-                                    uint32 heightSz);
+    __host__ void computeAdvectionCpu(Particle *particles, uint32_t widthSz,
+                                    uint32_t heightSz);
 
-    __host__ void computeDiffusionCpu(Particle *particles, uint32 widthSz, 
-                                    uint32 heightSz, float diffusionRate, uint32 iterations);
+    __host__ void computeDiffusionCpu(Particle *particles, uint32_t widthSz, 
+                                    uint32_t heightSz, float diffusionRate, uint32_t iterations);
 
-    __host__ void computePressureProjectionCpu(Particle *particles, uint32 widthSz, 
-                                            uint32 heightSz, uint32 iterations);
+    __host__ void computePressureProjectionCpu(Particle *particles, uint32_t widthSz, 
+                                            uint32_t heightSz, uint32_t iterations);
 
-    __host__ void handleCollisionsCpu(Particle *particles, uint32 widthSz, 
-                                    uint32 heightSz, bool freeSlip);
+    __host__ void handleCollisionsCpu(Particle *particles, uint32_t widthSz, 
+                                    uint32_t heightSz, bool freeSlip);
 
 }
 
