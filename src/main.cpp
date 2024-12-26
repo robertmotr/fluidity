@@ -1,5 +1,6 @@
 #include "render.h"
 #include "physics.h"
+#include "globals.h"
 
 int main(int argc, const char **argv) {
 
@@ -7,7 +8,6 @@ int main(int argc, const char **argv) {
         // todo: add more command line options
         for(int i = 0; i < argc; i++) {
             if(strcmp(argv[i], "--use-gpu") == 0) {
-                PhysicsGlobals::useGpu = true;
                 RenderConfig::useGpu = true;
             }
         }

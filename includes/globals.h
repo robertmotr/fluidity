@@ -14,7 +14,7 @@ namespace PhysicsConfig {
     extern uint32_t simulationWidthCells;
     extern uint32_t simulationHeightCells;
 
-    constexpr Vec2<float> gravity = Vec2<float>(0.0f, -9.8f);
+    extern const Vec2<float> gravity;
 } 
 
 namespace RenderConfig {

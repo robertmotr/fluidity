@@ -8,6 +8,8 @@ namespace PhysicsConfig {
     Vec2<float> customForce(0.0f, 0.0f);
     uint32_t simulationWidthCells = 64;
     uint32_t simulationHeightCells = 64;
+
+    const Vec2<float> gravity(0.0f, -9.8f);
 }
 
 namespace CPU {

@@ -14,6 +14,7 @@ private:
     // for optimal memory accesses on the GPU
     static_assert(128 % sizeof(Vec2<T>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
 public:
+
     Vec2(T x, T y) {
         values[0] = x;
         values[1] = y;
@@ -89,9 +90,14 @@ public:
 };
 
 class Particle {
+
+private:
+    // for optimal memory accesses on the GPU
+    static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to divide evenly into 128 bytes.");
+
 public:
-    Vec2<uint32_t> position((uint32_t)0, (uint32_t)0);
-    Vec2<float> velocity((float)0.0f, (float)0.0f);
+    Vec2<uint32_t> position = Vec2<uint32_t>(0, 0);
+    Vec2<float> velocity = Vec2<float>(0.0f, 0.0f);
     float density = 0.0f;
     float pressure = 0.0f;
     unsigned char rgb[4] = {0, 0, 0, 0};
@@ -99,14 +105,11 @@ public:
     // an even number for struct size, in order to ensure a list of particles
     // can fit in a cache line
 
-    Particle() {} // already initialized no need to do anything 
-
-private:
-    // for optimal memory accesses on the GPU
-    static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to divide evenly into 128 bytes.");
+    Particle() = default;
 };
 
-__device__ __host__ clamp(Vec2 &vec, uint32_t clamp, uint32_t boundary);
+template<typename T>
+__device__ __host__ clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary);
 
 __host__ void computeSimulationTick(Particle *particles, uint32_t widthSz, 
                                     uint32_t heightSz);
