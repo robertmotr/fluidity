@@ -3,22 +3,22 @@
 
 namespace CPU {
 
-    __host__ void bilinearInterpolationCpu(Particle *particles, uint32_t x, uint32_t y) {}
+    __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y) {}
 
-    __host__ void computeDivergenceCpu(Particle *particles, uint32_t widthSz,
+    __host__ void computeDivergence(Particle *particles, uint32_t widthSz,
                                     uint32_t heightSz) {}
 
-    __host__ void computeAdvectionCpu(Particle *particles, uint32_t widthSz,
-                                    uint32_t heightSz) {}
+    __host__ void computeAdvection(Particle *particles, uint32_t widthSz,
+                                   uint32_t heightSz) {}
 
-    __host__ void computeDiffusionCpu(Particle *particles, uint32_t widthSz, 
-                                    uint32_t heightSz, float diffusionRate, uint32_t iterations) {}
+    __host__ void computeDiffusion(Particle *particles, uint32_t widthSz, 
+                                   uint32_t heightSz, float diffusionRate, uint32_t iterations) {}
 
-    __host__ void computePressureProjectionCpu(Particle *particles, uint32_t widthSz, 
+    __host__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
                                             uint32_t heightSz, uint32_t iterations) {}
 
-    __host__ void handleCollisionsCpu(Particle *particles, uint32_t widthSz, 
-                                    uint32_t heightSz, bool freeSlip) {}
+    __host__ void handleCollisions(Particle *particles, uint32_t widthSz, 
+                                   uint32_t heightSz, bool freeSlip) {}
 
 }
 
