@@ -2,12 +2,6 @@
 #include "physics.h"
 #include "globals.h"
 
-namespace RenderConfig {
-    bool useGpu = false;
-    uint32_t kernelGridSize = 1;
-    uint32_t kernelBlockSize = 1;
-}
-
 void errorCallback(int error, const char* description) {
     std::cout << "Error: " << description << std::endl;
 }

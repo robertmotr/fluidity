@@ -25,7 +25,7 @@ public:
         values[1] = val;
     }
 
-    Vec2() {}
+    Vec2() = default;
 
     // operator overloads start here
     T& operator[](size_t index) {
@@ -98,6 +98,7 @@ private:
 public:
     Vec2<uint32_t> position = Vec2<uint32_t>(0, 0);
     Vec2<float> velocity = Vec2<float>(0.0f, 0.0f);
+    float friction = 0.0f;
     float density = 0.0f;
     float pressure = 0.0f;
     unsigned char rgb[4] = {0, 0, 0, 0};
