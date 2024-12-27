@@ -18,9 +18,9 @@ namespace PhysicsConfig {
 } 
 
 namespace RenderConfig {
-    constexpr uint32_t windowWidth = 1920;
-    constexpr uint32_t windowHeight = 1080;
-    const char* windowTitle = "Fluid Simulation";
+    inline constexpr uint32_t windowWidth = 1920;
+    inline constexpr uint32_t windowHeight = 1080;
+    inline constexpr const char* windowTitle = "Fluid Simulation";
     
     extern bool useGpu;
     extern uint32_t kernelGridSize;

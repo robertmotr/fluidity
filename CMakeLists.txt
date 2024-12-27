@@ -77,9 +77,8 @@ elseif(UNIX AND NOT APPLE)
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         if(DEBUG)
             target_compile_options(${PROJECT_NAME} PRIVATE 
-                -Wall -Wextra -Wpedantic -O0 -g -fsanitize=address,undefined -fno-inline) # Debug options
-            target_link_libraries(${PROJECT_NAME} PRIVATE
-                -fsanitize=address -fsanitize=undefined)
+                -Wall -Wextra -Wpedantic -O0 -g -fno-inline) # Debug options
+            target_link_libraries(${PROJECT_NAME} PRIVATE)
         else()
             target_compile_options(${PROJECT_NAME} PRIVATE 
                 -Wall -Wextra -Wpedantic -O3) # Release options

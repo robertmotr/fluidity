@@ -6,7 +6,7 @@ void errorCallback(int error, const char* description);
 
 void framebufferSizeCallback(GLFWwindow* window, int width, int height);
 
-GLFWwindow* glfwSetup(uint32_t width, uint32_t height, uint32_t title, 
+GLFWwindow* glfwSetup(uint32_t width, uint32_t height, const char* title, 
                       GLFWmonitor *monitor, GLFWwindow *share);
 
 ImGuiIO& setupImGui(GLFWwindow *window);

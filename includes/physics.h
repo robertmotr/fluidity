@@ -11,8 +11,6 @@ private:
     static_assert(std::is_same<T, float>::value || std::is_same<T, uint32_t>::value ||
                   std::is_same<T, int>::value, "Type used inside vector must be of unsigned int, int, or float.");    
 
-    // for optimal memory accesses on the GPU
-    static_assert(128 % sizeof(Vec2<T>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
 public:
 
     Vec2(T x, T y) {
@@ -89,12 +87,11 @@ public:
     } 
 };
 
+static_assert(128 % sizeof(Vec2<uint32_t>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
+static_assert(128 % sizeof(Vec2<float>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
+static_assert(128 % sizeof(Vec2<int>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
+
 class Particle {
-
-private:
-    // for optimal memory accesses on the GPU
-    static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to divide evenly into 128 bytes.");
-
 public:
     Vec2<uint32_t> position = Vec2<uint32_t>(0, 0);
     Vec2<float> velocity = Vec2<float>(0.0f, 0.0f);
@@ -109,8 +106,12 @@ public:
     Particle() = default;
 };
 
+static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to be 128 bytes.");
+
 template<typename T>
-__device__ __host__ clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary);
+__device__ __host__ void clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary) {
+    //todo: implement this function
+}
 
 __host__ void computeSimulationTick(Particle *particles, uint32_t widthSz, 
                                     uint32_t heightSz);

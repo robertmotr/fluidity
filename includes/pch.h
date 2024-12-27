@@ -1,4 +1,5 @@
 #pragma once
+#pragma GCC system_header
 
 // cuda related
 #include <cuda_runtime.h>

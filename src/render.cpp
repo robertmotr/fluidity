@@ -15,7 +15,7 @@ GLFWwindow* glfwSetup(uint32_t width, uint32_t height, const char* title,
     glfwSetErrorCallback(errorCallback);
     if (!glfwInit()) {
         std::cerr << "Failed to initialize GLFW" << std::endl;
-        return -1;
+        return nullptr;
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -26,7 +26,7 @@ GLFWwindow* glfwSetup(uint32_t width, uint32_t height, const char* title,
     if (!window) {
         std::cerr << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
-        return -1;
+        return nullptr;
     }
 
     glfwMakeContextCurrent(window);
@@ -34,7 +34,7 @@ GLFWwindow* glfwSetup(uint32_t width, uint32_t height, const char* title,
 
     if(!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         std::cerr << "Failed to initialize GLAD" << std::endl;
-        return -1;
+        return nullptr;
     }
 
     glViewport(0, 0, 800, 800);

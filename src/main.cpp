@@ -13,6 +13,8 @@ int main(int argc, const char **argv) {
         }
     }
 
+    Particle *particles = new Particle[PhysicsConfig::simulationWidthCells * PhysicsConfig::simulationHeightCells];
+
     GLFWwindow* window = glfwSetup(800, 800, "Fluid Simulation", nullptr, nullptr);
     ImGuiIO& io = setupImGui(window);
 
@@ -24,7 +26,8 @@ int main(int argc, const char **argv) {
         ImGui::NewFrame();
 
         showContent(window);
-        computeSimulationTick();
+        computeSimulationTick(particles, PhysicsConfig::simulationWidthCells, 
+                                         PhysicsConfig::simulationHeightCells);
 
         ImGui::Render();
         glViewport(0, 0, 1920, 1080);
