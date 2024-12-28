@@ -149,6 +149,9 @@ namespace CPU {
     __host__ void computeDiffusion(Particle *particles, uint32_t widthSz, 
                                    uint32_t heightSz, float diffusionRate, uint32_t iterations);
 
+    __host__ void solvePressure(Particle *particles, std::array<float> &divField, uint32_t width,
+                                uint32_t height, uint32_t iterations)
+
     __host__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
                                             uint32_t heightSz, uint32_t iterations);
 
