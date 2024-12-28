@@ -130,7 +130,7 @@ namespace GPU {
                                      uint32_t heightSz, float diffusionRate, uint32_t iterations);
 
     __global__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
-                                              uint32_t heightSz, uint32_t iterations);
+                                              uint32_t heightSz);
 
     __global__ void handleCollisions(Particle *particles, uint32_t widthSz, 
                                      uint32_t heightSz, bool freeSlip);
@@ -149,8 +149,8 @@ namespace CPU {
     __host__ void computeDiffusion(Particle *particles, uint32_t widthSz, 
                                    uint32_t heightSz, float diffusionRate, uint32_t iterations);
 
-    __host__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
-                                            uint32_t heightSz, uint32_t iterations);
+    __host__ void computePressureProjection(Particle *particles, uint32_t width, 
+                                            uint32_t height);
 
     __host__ void handleCollisions(Particle *particles, uint32_t widthSz, 
                                    uint32_t heightSz, bool freeSlip);
