@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <cmath>
 #include <type_traits>
+#include <array>
 
 // imgui/graphics/rendering
 #include "imgui.h"

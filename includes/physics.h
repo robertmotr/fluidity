@@ -140,8 +140,8 @@ namespace CPU {
 
     __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
 
-    __host__ void computeDivergence(Particle *particles, uint32_t widthSz,
-                                    uint32_t heightSz);
+    __host__ void computeDivergence(Particle *particles, uint32_t width,
+                                    uint32_t height, std::array<float> &divField);
 
     __host__ void computeAdvection(Particle *particles, uint32_t widthSz,
                                    uint32_t heightSz);
@@ -151,6 +151,9 @@ namespace CPU {
 
     __host__ void computePressureProjection(Particle *particles, uint32_t width, 
                                             uint32_t height);
+  
+    __host__ void solvePressure(Particle *particles, std::array<float> &divField, uint32_t width,
+                                uint32_t height, uint32_t iterations)
 
     __host__ void handleCollisions(Particle *particles, uint32_t widthSz, 
                                    uint32_t heightSz, bool freeSlip);
