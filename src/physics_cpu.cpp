@@ -75,17 +75,20 @@ namespace CPU {
 
 }
 
-void computeSimulationTick(Particle *particles, uint32_t widthSz, 
-                           uint32_t heightSz) {
+void computeSimulationTick(Particle *particles, uint32_t width, 
+                           uint32_t height) {
+    
+    static std::vector<float> divField(width * height, 0.0f);
+
     if(RenderConfig::useGpu) {
         // call GPU functions
     } else {
         // call CPU functions
-        CPU::computeDivergenceCpu(particles, widthSz, heightSz);
-        CPU::computePressureProjectionCpu(particles, widthSz, heightSz, PhysicsConfig::iterations);
-        CPU::computeAdvectionCpu(particles, widthSz, heightSz);
-        CPU::computeDiffusionCpu(particles, widthSz, heightSz, 
-                                 PhysicsConfig::diffusionRate, PhysicsConfig::iterations);
-        CPU::handleCollisionsCpu(particles, widthSz, heightSz, PhysicsConfig::freeSlip);
+        CPU::computeDivergence(particles, width, height, divField);
+        CPU::computePressureProjection(particles, width, height);
+        CPU::computeAdvection(particles, width, height);
+        CPU::computeDiffusion(particles, width, height, 
+                              PhysicsConfig::diffusionRate, PhysicsConfig::iterations);
+        CPU::handleCollisions(particles, width, height, PhysicsConfig::freeSlip);
     }
 }
