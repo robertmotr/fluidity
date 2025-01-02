@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <cmath>
 #include <type_traits>
+#include <vector>
 
 // imgui/graphics/rendering
 #include "imgui.h"

@@ -58,6 +58,11 @@ public:
         return Vec2(vec[0] + scalar, vec[1] + scalar);
     }
 
+    // vec + vec
+    Vec2 operator+(const Vec2& vec) {
+        return Vec2(values[0] + vec[0], values[1] + vec[1]);
+    }
+
     // to support vec - scalar
     friend Vec2 operator-(const Vec2& vec, T scalar) {
         return Vec2(vec[0] - scalar, vec[1] - scalar);
@@ -68,6 +73,11 @@ public:
         return Vec2(scalar - vec[0], scalar - vec[1]);
     }
 
+    // vec - vec
+    Vec2 operator-(const Vec2& vec) {
+        return Vec2(values[0] - vec[0], values[1] - vec[1]);
+    }
+
     // to support scalar * vec
     friend Vec2 operator*(T scalar, const Vec2& vec) {
         return Vec2(vec[0] * scalar, vec[1] * scalar);
@@ -76,6 +86,11 @@ public:
     // to support vec * scalar
     friend Vec2 operator*(const Vec2& vec, T scalar) {
         return Vec2(vec[0] * scalar, vec[1] * scalar);
+    }
+
+    // to support vec * vec
+    Vec2 operator*(const Vec2& vec) {
+        return Vec2(vec[0] * values[0], vec[1] * values[1]);
     }
 
     friend T dotProduct(const Vec2& a, const Vec2& b) {
@@ -93,7 +108,7 @@ static_assert(128 % sizeof(Vec2<int>) == 0, "Vector struct size needs to divide 
 
 class Particle {
 public:
-    Vec2<uint32_t> position = Vec2<uint32_t>(0, 0);
+    Vec2<float> position = Vec2<float>(0.0f, 0.0f);
     Vec2<float> velocity = Vec2<float>(0.0f, 0.0f);
     float friction = 0.0f;
     float density = 0.0f;
@@ -113,47 +128,50 @@ __device__ __host__ void clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary) 
     //todo: implement this function
 }
 
-__host__ void computeSimulationTick(Particle *particles, uint32_t widthSz, 
-                                    uint32_t heightSz);
+__host__ void computeSimulationTick(Particle *particles, uint32_t width, 
+                                    uint32_t height);
 
 namespace GPU {
 
     __global__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
 
-    __global__ void computeDivergence(Particle *particles, uint32_t widthSz,
-                                      uint32_t heightSz);
+    __global__ void computeDivergence(Particle *particles, uint32_t width,
+                                      uint32_t height);
 
-    __global__ void computeAdvection(Particle *particles, uint32_t widthSz, 
-                                     uint32_t heightSz);
+    __global__ void computeAdvection(Particle *particles, uint32_t width, 
+                                     uint32_t height);
 
-    __global__ void computeDiffusion(Particle *particles, uint32_t widthSz, 
-                                     uint32_t heightSz, float diffusionRate, uint32_t iterations);
+    __global__ void computeDiffusion(Particle *particles, uint32_t width, 
+                                     uint32_t height, float diffusionRate, uint32_t iterations);
 
-    __global__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
-                                              uint32_t heightSz, uint32_t iterations);
+    __global__ void computePressureProjection(Particle *particles, uint32_t width, 
+                                              uint32_t height);
 
-    __global__ void handleCollisions(Particle *particles, uint32_t widthSz, 
-                                     uint32_t heightSz, bool freeSlip);
+    __global__ void handleCollisions(Particle *particles, uint32_t width, 
+                                     uint32_t height, bool freeSlip);
 }
 
 namespace CPU {
 
     __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
 
-    __host__ void computeDivergence(Particle *particles, uint32_t widthSz,
-                                    uint32_t heightSz);
+    __host__ void computeDivergence(Particle *particles, uint32_t width,
+                                    uint32_t height, std::vector<float> &divField);
 
-    __host__ void computeAdvection(Particle *particles, uint32_t widthSz,
-                                   uint32_t heightSz);
+    __host__ void computeAdvection(Particle *particles, uint32_t width,
+                                   uint32_t height);
 
-    __host__ void computeDiffusion(Particle *particles, uint32_t widthSz, 
-                                   uint32_t heightSz, float diffusionRate, uint32_t iterations);
+    __host__ void computeDiffusion(Particle *particles, uint32_t width, 
+                                   uint32_t height, float diffusionRate, uint32_t iterations);
 
-    __host__ void computePressureProjection(Particle *particles, uint32_t widthSz, 
-                                            uint32_t heightSz, uint32_t iterations);
+    __host__ void computePressureProjection(Particle *particles, uint32_t width, 
+                                            uint32_t height);
+  
+    __host__ void solvePressure(Particle *particles, std::vector<float> &divField, uint32_t width,
+                                uint32_t height, uint32_t iterations);
 
-    __host__ void handleCollisions(Particle *particles, uint32_t widthSz, 
-                                   uint32_t heightSz, bool freeSlip);
+    __host__ void handleCollisions(Particle *particles, uint32_t width, 
+                                   uint32_t height, bool freeSlip);
 
 }
 
