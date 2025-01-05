@@ -3,7 +3,9 @@
 
 namespace CPU {
 
-    __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y) {}
+    __host__ void bilinearInterpolation(Particle *particles, float x, float y) {
+        
+    }
 
     __host__ void computeDivergence(Particle *particles, uint32_t width,
                                     uint32_t height, std::vector<float> &divField) {
@@ -53,7 +55,24 @@ namespace CPU {
     }
 
     __host__ void computeAdvection(Particle *particles, uint32_t width,
-                                   uint32_t height) {}
+                                   uint32_t height) {
+        uint32_t idx;
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                idx = i + j * width;
+                uint32_t prev_position_x = idx - PhysicsConfig::dt * particles[idx].velocity[0] / PhysicsConfig::cellSize;
+                uint32_t prev_position_y = idx - PhysicsConfig::dt * particles[idx].velocity[1] / PhysicsConfig::cellSize;
+                
+                if(prev_position_x < 0 || prev_position_x >= width || prev_position_y < 0 || prev_position_y >= height){
+                    particles[idx].velocity[0] = 0;
+                    particles[idx].velocity[1] = 0;
+                } else {
+                    particles[idx].velocity[0] = particles[prev_position_x].velocity[0];
+                    particles[idx].velocity[1] = particles[prev_position_y].velocity[1];
+                }
+            }
+        }
+    }
 
     __host__ void computeDiffusion(Particle *particles, uint32_t width, uint32_t height, 
                                    float diffusionRate, uint32_t iterations) {}

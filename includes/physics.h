@@ -123,17 +123,12 @@ public:
 
 static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to be 128 bytes.");
 
-template<typename T>
-__device__ __host__ void clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary) {
-    //todo: implement this function
-}
-
 __host__ void computeSimulationTick(Particle *particles, uint32_t width, 
                                     uint32_t height);
 
 namespace GPU {
 
-    __global__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
+    __global__ void bilinearInterpolation(Particle *particles, float x, float y);
 
     __global__ void computeDivergence(Particle *particles, uint32_t width,
                                       uint32_t height);
