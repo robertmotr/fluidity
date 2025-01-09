@@ -5,6 +5,16 @@ namespace CPU {
 
     __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y) {}
 
+    __host__ void addGlobalExternalForce(Patricle *particles, Vec2<float> force,
+                                        float dt, uint32_t width, uint32_t height){
+        for(int i = 0; i < height; i++){
+            for(int j = 0; j < width; j++){
+                idx = i + j * width;
+                particles[idx] = particles[idx] + (force * dt);
+            }
+        }
+    }
+
     __host__ void computeDivergence(Particle *particles, uint32_t width,
                                     uint32_t height, std::vector<float> &divField) {
 
@@ -76,7 +86,7 @@ namespace CPU {
 }
 
 void computeSimulationTick(Particle *particles, uint32_t width, 
-                           uint32_t height) {
+                           uint32_t height, Vec2<float> globalForce, float dt) {
     
     static std::vector<float> divField(width * height, 0.0f);
 
@@ -84,6 +94,7 @@ void computeSimulationTick(Particle *particles, uint32_t width,
         // call GPU functions
     } else {
         // call CPU functions
+        CPU::addGlobalExternalForces(particles, globalForce, dt)
         CPU::computeDivergence(particles, width, height, divField);
         CPU::computePressureProjection(particles, width, height);
         CPU::computeAdvection(particles, width, height);

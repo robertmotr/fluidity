@@ -129,7 +129,7 @@ __device__ __host__ void clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary) 
 }
 
 __host__ void computeSimulationTick(Particle *particles, uint32_t width, 
-                                    uint32_t height);
+                                    uint32_t height, Vec2<float> globalForce);
 
 namespace GPU {
 
@@ -152,6 +152,9 @@ namespace GPU {
 }
 
 namespace CPU {
+
+
+    __host__ void addGlobalExternalForce(Patricle *particles, Vec2<float> force, float dt);
 
     __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
 
