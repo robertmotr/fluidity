@@ -106,72 +106,57 @@ static_assert(128 % sizeof(Vec2<uint32_t>) == 0, "Vector struct size needs to di
 static_assert(128 % sizeof(Vec2<float>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
 static_assert(128 % sizeof(Vec2<int>) == 0, "Vector struct size needs to divide evenly into 128 bytes.");
 
-class Particle {
+class Grid {
 public:
-    Vec2<float> position = Vec2<float>(0.0f, 0.0f);
-    Vec2<float> velocity = Vec2<float>(0.0f, 0.0f);
-    float friction = 0.0f;
-    float density = 0.0f;
-    float pressure = 0.0f;
-    unsigned char rgb[4] = {0, 0, 0, 0};
+    std::vector<Vec2<float>> velocity;
+    std::vector<float> density;
+    std::vector<float> pressure;
+    std::vector<unsigned char[4]> colours;
+    std::vector<float> divField;
     // no need for A value, but we pad rgb to 4 bytes to get
     // an even number for struct size, in order to ensure a list of particles
     // can fit in a cache line
 
-    Particle() = default;
+    unsigned int width = 0;
+    unsigned int height = 0;
 };
 
-static_assert(128 % sizeof(Particle) == 0, "Particle struct size needs to be 128 bytes.");
-
-template<typename T>
-__device__ __host__ void clamp(Vec2<T> &vec, uint32_t clamp, uint32_t boundary) {
-    //todo: implement this function
-}
-
-__host__ void computeSimulationTick(Particle *particles, uint32_t width, 
-                                    uint32_t height);
+__host__ void computeSimulationTick(Grid *grid);
 
 namespace GPU {
 
-    __global__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
+    __global__ void addSource(Grid *grid, std::vector<float> &source, float dt);
 
-    __global__ void computeDivergence(Particle *particles, uint32_t width,
-                                      uint32_t height);
+    __global__ void bilinearInterpolation(Grid *grid, uint32_t x, uint32_t y);
 
-    __global__ void computeAdvection(Particle *particles, uint32_t width, 
-                                     uint32_t height);
+    __global__ void computeDivergence(Grid *grid);
 
-    __global__ void computeDiffusion(Particle *particles, uint32_t width, 
-                                     uint32_t height, float diffusionRate, uint32_t iterations);
+    __global__ void computeAdvection(Grid *grid);
 
-    __global__ void computePressureProjection(Particle *particles, uint32_t width, 
-                                              uint32_t height);
+    __global__ void computeDiffusion(Grid *grid, float diffusionRate, uint32_t iterations);
 
-    __global__ void handleCollisions(Particle *particles, uint32_t width, 
-                                     uint32_t height, bool freeSlip);
+    __global__ void computePressureProjection(Grid *grid);
+
+    __global__ void handleCollisions(Grid *grid, bool freeSlip);
 }
 
 namespace CPU {
 
-    __host__ void bilinearInterpolation(Particle *particles, uint32_t x, uint32_t y);
+    __host__ void addSource(Grid *grid, std::vector<float> &source, float dt);
 
-    __host__ void computeDivergence(Particle *particles, uint32_t width,
-                                    uint32_t height, std::vector<float> &divField);
+    __host__ void bilinearInterpolation(Grid *grid, uint32_t x, uint32_t y);
 
-    __host__ void computeAdvection(Particle *particles, uint32_t width,
-                                   uint32_t height);
+    __host__ void computeDivergence(Grid *grid);
 
-    __host__ void computeDiffusion(Particle *particles, uint32_t width, 
-                                   uint32_t height, float diffusionRate, uint32_t iterations);
+    __host__ void computeAdvection(Grid *grid);
 
-    __host__ void computePressureProjection(Particle *particles, uint32_t width, 
-                                            uint32_t height);
+    __host__ void computeDiffusion(Grid *grid, float diffusionRate, uint32_t iterations);
+
+    __host__ void computePressureProjection(Grid *grid);
   
-    __host__ void solvePressure(Particle *particles, std::vector<float> &divField, uint32_t width,
-                                uint32_t height, uint32_t iterations);
+    __host__ void solvePressure(Grid *grid, uint32_t iterations);
 
-    __host__ void handleCollisions(Particle *particles, uint32_t width, 
-                                   uint32_t height, bool freeSlip);
+    __host__ void handleCollisions(Grid *grid, bool freeSlip);
 
 }
 
